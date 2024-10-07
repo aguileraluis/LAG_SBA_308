@@ -113,19 +113,7 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
         let due = dueDate.toString(); 
         let submit = dateSubmitted.toString();
-        
-        // if (due === submit) {
-        //   console.log(assignment, user)
-        //   console.log('assignment is due' + due, submit); 
-        // } else if (due > submit) {
-        //   console.log(assignment, user)
-
-        //   console.log('assignment is not due yet' + due, submit); 
-        // } else if (due < submit) {
-        //   console.log(assignment, user)
-
-        //   console.log('assignment is past due' + due, submit); 
-        // }
+      
 
         switch (true) {
           case due === submit:
