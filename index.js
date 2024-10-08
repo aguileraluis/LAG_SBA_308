@@ -88,62 +88,77 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
   function getAssignments() {
 
-    // console.log(date); 
-
    let userAssignment;  
    let assignment; 
 
-  //  assignments.forEach(assignment => console.log(assignment.id))
-  
   for (let i = 0; i < assignments.length; i++) {
     let assignmentObject = assignments[i]; 
     assignment = assignments[i].id; 
-    // console.log(assignment + 'I am the assignment assigned')
 
     for (let i = 0; i < LearnerSubmissions.length; i++) {
-      let userObject = LearnerSubmissions[i]; 
-      userAssignment = LearnerSubmissions[i].assignment_id; 
-      // console.log(userAssignment + 'I am the submitted assignment')
+
       let user = LearnerSubmissions[i]; 
+      userAssignment = LearnerSubmissions[i].assignment_id; 
 
       if (assignment === userAssignment) {
         // submission.push({ assignment, user});  
         let dueDate = assignmentObject.due_at; 
-        let dateSubmitted = userObject.submission.submitted_at; 
+        let dateSubmitted = user.submission.submitted_at; 
 
         let due = dueDate.toString(); 
         let submit = dateSubmitted.toString();
-      
-
+    
         switch (true) {
           case due === submit:
-            // console.log('assignment is due' + due, submit)
-            submission.push({assignmentObject, user, late: false})
+            submission.push([{assignmentObject, user, late: false}])
             break; 
           case due < submit:
-          // console.log('assignment is past due' + due, submit)
-          submission.push({assignmentObject, user, late: true})
-          break;
-          default: 
-          // console.log('assignment is not due yet' + due, submit)
-          break; 
+            submission.push([{assignmentObject, user, late: true}])
+            break;
+          case due > submit: 
+            const dueYear = Number(due.slice(0,4));
+            const submitDate = Number(submit.slice(0,4));
+            if (dueYear - submitDate > 1){
+             continue;
+            } else {
+              submission.push([{assignmentObject, user, late: false}])
+            }
+            break;
         }
-      }
-   
-       let submittedDate = LearnerSubmissions[i].submission.submitted_at; 
-   
-       
-       let resultItem = { id: LearnerSubmissions[i].learner_id }
-   
-   
+      }   
      }
   }
   }
 
   getAssignments()
 
-  console.log(submission)
-  
+  function getAverage() {
+
+    let grades = []; 
+
+    for (let i = 0; i < submission.length; i++) {
+
+      const item = submission[i];
+      const id = item[0].assignmentObject.id; 
+      const pointsPossible = (item[0].assignmentObject.points_possible);
+      const pointsEarned = (item[0].user.submission.score); 
+
+      let avgAssignment = pointsEarned / pointsPossible;
+
+      grades.push(avgAssignment.toFixed(2)); 
+
+      // console.log(`${id}: ${avgAssignment}`); 
+
+    }
+
+    
+
+  }
+
+  getAverage()
+
+  // console.log(submission); 
+
 }
 
 
