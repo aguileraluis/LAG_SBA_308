@@ -36,7 +36,7 @@ const LearnerSubmissions = [
     assignment_id: 1,
     submission: {
       submitted_at: "2023-01-25",
-      score: 50,
+      score: 47,
     },
   },
   {
@@ -44,7 +44,7 @@ const LearnerSubmissions = [
     assignment_id: 2,
     submission: {
       submitted_at: "2023-02-12",
-      score: 50,
+      score: 150,
     },
   },
   {
@@ -52,7 +52,7 @@ const LearnerSubmissions = [
     assignment_id: 3,
     submission: {
       submitted_at: "2023-01-25",
-      score: 50,
+      score: 400,
     },
   },
   {
@@ -104,6 +104,12 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
     
           for (let i = 0; i < LearnerSubmissions.length; i++) {
             let user = LearnerSubmissions[i];
+
+         if(typeof(user.submission.score) == 'string') {
+             throw new TypeError('You cant have strings as inputs. Please use a number')
+         }
+       
+
             userAssignment = LearnerSubmissions[i].assignment_id;
             let learnerID = user.learner_id;
             
@@ -280,22 +286,6 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
            }
         } 
       }
-
-      // I was trying to validate my inputs for average and id to make sure that they are numbers and if they aren't then I was going to throw an error. I was able to validate that the course_id matches and that the points possible is above 0. 
-    
-    //  let objectNums = Object.values(result); 
-
-    // objectNums.forEach((number) => {
-    //   try {
-    //     if (number.avg || number.id !== 'NAN') {
-    //       throw new TypeError('Error, please use numbers')
-    //     }
-    //   } catch (err) {
-    //     console.log(err)
-    //   }
-    // })
-        
-    
   
       return result;
        
@@ -306,11 +296,6 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
     console.log(message)
   } 
   }  
-
- 
-
-
-
 
   let myResult = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
   console.log(myResult);
