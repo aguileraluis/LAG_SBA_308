@@ -83,22 +83,18 @@ let totalTemp = 0;
 let possibleTemp = 0;
 
 function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
-  let totalScore = 0;
-  let possiblePoints = 0;
-  let late = false;
+
   let submission = [];
   let assignments = AssignmentGroup.assignments;
   let current = [];
-
+  let assignmentGrade;
   let average;
   let deduction;
  
   function getAssignments() {
     let userAssignment;
     let assignment;
-    let totalPoints = 0;
-    let pointsEarned = 0;
-  
+
 
     for (let i = 0; i < assignments.length; i++) {
       let assignmentObject = assignments[i];
@@ -111,10 +107,9 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
         let learnerID = user.learner_id; 
         let score = Number(user.submission.score);
         let totalPossible = Number(assignmentObject.points_possible);
-        let assignmentGrade = score/ totalPossible; 
+       
 
         while (assignment === userAssignment) {
-          // submission.push({ assignment, user});
           let dueDate = assignmentObject.due_at;
           let dateSubmitted = user.submission.submitted_at;
          
@@ -122,10 +117,6 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
           let due = dueDate.toString();
           let submit = dateSubmitted.toString();
 
-
-
-    
-          // console.log(user)
         
           let tot = 0; 
           let poss = 0; 
@@ -135,14 +126,11 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
               tot += score; 
               poss += totalPossible; 
-              // totalTemp += totalPossible;
-              // possibleTemp += score;
-              // average = possibleTemp / totalTemp;
-              
-              // console.log(average);
-              averageItems.push({tot, poss, learnerID})
+              assignmentGrade = score/ totalPossible; 
+             
+              averageItems.push({tot, poss, learnerID, userAssignment, assignmentGrade})
               submission.push([
-                { assignmentObject, user, late: false, average, assignmentGrade},
+                { assignmentObject, user, late: false, assignmentGrade},
               ]);
 
               break;
@@ -153,15 +141,12 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
 
               tot += score; 
               poss += totalPossible; 
+              assignmentGrade = score/ totalPossible; 
 
-              // totalTemp += totalPossible;
-              // possibleTemp += score;
-              // average = possibleTemp / totalTemp;
-
-              // console.log(average);
-              averageItems.push({tot, poss, learnerID})
+             
+              averageItems.push({tot, poss, learnerID, userAssignment, assignmentGrade})
               submission.push([
-                { assignmentObject, user, late: true, average, assignmentGrade},
+                { assignmentObject, user, late: true, assignmentGrade},
               ]);
 
               break;
@@ -171,21 +156,19 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
               if (dueYear - submitDate > 1) {
                 break;
               } else {
-                // totalTemp += totalPossible;
-                // possibleTemp += score;
-                // average = possibleTemp / totalTemp;
+         
                 tot += score; 
                 poss += totalPossible; 
-                averageItems.push({tot, poss, learnerID})
-                // console.log(average);
+                assignmentGrade = score/ totalPossible; 
+                averageItems.push({tot, poss, learnerID, userAssignment, assignmentGrade})
+           
                 submission.push([
-                  { assignmentObject, user, late: false, average, assignmentGrade },
+                  { assignmentObject, user, late: false, assignmentGrade },
                 ]);
 
                 break;
               }
           }
-          // console.log(possibleTemp, totalTemp);
           break;
         }
       }
@@ -198,16 +181,8 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
           return arr.filter((value, index) => arr.indexOf(value) == index);
         }
 
-  // console.log(submission)
   function getAverage() {
 
-  
- 
-   let gradesAverage = [];
-
-   function getStudents(arr) {
-     return arr.filter((value, index) => arr.indexOf(value) == index);
- }
 
  for (let i = 0; i < submission.length; i++) {
 
@@ -219,20 +194,9 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
   
 
         current.push(userId);
-        // if (!item.average) {
-        //   item.average =
-        // }
-
-        
-        
-     
-
-  
 
       }
      
-     
-      // console.log(learners)
     }
     getAverage();
 
@@ -257,12 +221,24 @@ function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
       }
 
       let average = (tempTot / tempPoss); 
-      console.log(average)
+      // console.log(average)
+      averageItems.forEach((item) => {
+        if (item.learnerID === temp) {
+      
+        item.average = average; 
+        console.log(item)
+        }
+      })
+
+
+     
+
+      // submission.forEach((sub) => {
+      //   console.log(sub)
+      // })
     })
 
-    submission.forEach((sub) => {
-      console.log(sub)
-    })
+    
   result = [];
  
 }
