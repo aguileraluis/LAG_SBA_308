@@ -1,7 +1,7 @@
 // The provided course information.
 const CourseInfo = {
   id: 451,
-  name: "Introduction to JavaScript"
+  name: "Introduction to JavaScript",
 };
 
 // The provided assignment group.
@@ -15,21 +15,21 @@ const AssignmentGroup = {
       id: 1,
       name: "Declare a Variable",
       due_at: "2023-01-25",
-      points_possible: 50
+      points_possible: 50,
     },
     {
       id: 2,
       name: "Write a Function",
       due_at: "2023-02-27",
-      points_possible: 150
+      points_possible: 150,
     },
     {
       id: 3,
       name: "Code the World",
       due_at: "3156-11-15",
-      points_possible: 500
-    }
-  ]
+      points_possible: 500,
+    },
+  ],
 };
 
 // The provided learner submission data.
@@ -39,130 +39,232 @@ const LearnerSubmissions = [
     assignment_id: 1,
     submission: {
       submitted_at: "2023-01-25",
-      score: 47
-    }
+      score: 47,
+    },
   },
   {
     learner_id: 125,
     assignment_id: 2,
     submission: {
       submitted_at: "2023-02-12",
-      score: 150
-    }
+      score: 150,
+    },
   },
   {
     learner_id: 125,
     assignment_id: 3,
     submission: {
       submitted_at: "2023-01-25",
-      score: 400
-    }
+      score: 400,
+    },
   },
   {
     learner_id: 132,
     assignment_id: 1,
     submission: {
       submitted_at: "2023-01-24",
-      score: 39
-    }
+      score: 39,
+    },
   },
   {
     learner_id: 132,
     assignment_id: 2,
     submission: {
       submitted_at: "2023-03-07",
-      score: 140
-    }
-  }
+      score: 140,
+    },
+  },
 ];
 
-const result = []; 
+let result = [];
+let grades = [];
+let averageItems = [];
+let totalTemp = 0;
+let possibleTemp = 0;
 
 function getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions) {
+  let totalScore = 0;
+  let possiblePoints = 0;
+  let late = false;
+  let submission = [];
+  let assignments = AssignmentGroup.assignments;
+  let current = [];
 
-  let totalScore = 0; 
-  let possiblePoints = 0; 
-  let late = false; 
-  let submission = []; 
-  let assignments = (AssignmentGroup.assignments);
-
+  let average;
+  let deduction;
+ 
   function getAssignments() {
+    let userAssignment;
+    let assignment;
+    let totalPoints = 0;
+    let pointsEarned = 0;
+  
 
-   let userAssignment;  
-   let assignment; 
+    for (let i = 0; i < assignments.length; i++) {
+      let assignmentObject = assignments[i];
+      assignment = assignments[i].id;
+     
 
-  for (let i = 0; i < assignments.length; i++) {
-    let assignmentObject = assignments[i]; 
-    assignment = assignments[i].id; 
+      for (let i = 0; i < LearnerSubmissions.length; i++) {
+        let user = LearnerSubmissions[i];
+        userAssignment = LearnerSubmissions[i].assignment_id;
+        let learnerID = user.learner_id; 
+        let score = Number(user.submission.score);
+        let totalPossible = Number(assignmentObject.points_possible);
+        let assignmentGrade = score/ totalPossible; 
 
-    for (let i = 0; i < LearnerSubmissions.length; i++) {
+        while (assignment === userAssignment) {
+          // submission.push({ assignment, user});
+          let dueDate = assignmentObject.due_at;
+          let dateSubmitted = user.submission.submitted_at;
+         
 
-      let user = LearnerSubmissions[i]; 
-      userAssignment = LearnerSubmissions[i].assignment_id; 
+          let due = dueDate.toString();
+          let submit = dateSubmitted.toString();
 
-      if (assignment === userAssignment) {
-        // submission.push({ assignment, user});  
-        let dueDate = assignmentObject.due_at; 
-        let dateSubmitted = user.submission.submitted_at; 
 
-        let due = dueDate.toString(); 
-        let submit = dateSubmitted.toString();
+
     
-        switch (true) {
-          case due === submit:
-            submission.push([{assignmentObject, user, late: false}])
-            break; 
-          case due < submit:
-            submission.push([{assignmentObject, user, late: true}])
-            break;
-          case due > submit: 
-            const dueYear = Number(due.slice(0,4));
-            const submitDate = Number(submit.slice(0,4));
-            if (dueYear - submitDate > 1){
-             continue;
-            } else {
-              submission.push([{assignmentObject, user, late: false}])
-            }
-            break;
+          // console.log(user)
+        
+          let tot = 0; 
+          let poss = 0; 
+          switch (true) {
+            case due === submit:
+              
+
+              tot += score; 
+              poss += totalPossible; 
+              // totalTemp += totalPossible;
+              // possibleTemp += score;
+              // average = possibleTemp / totalTemp;
+              
+              // console.log(average);
+              averageItems.push({tot, poss, learnerID})
+              submission.push([
+                { assignmentObject, user, late: false, average, assignmentGrade},
+              ]);
+
+              break;
+            case due < submit:
+              deduction = totalPossible * 0.1;
+
+              score = score - deduction;
+
+              tot += score; 
+              poss += totalPossible; 
+
+              // totalTemp += totalPossible;
+              // possibleTemp += score;
+              // average = possibleTemp / totalTemp;
+
+              // console.log(average);
+              averageItems.push({tot, poss, learnerID})
+              submission.push([
+                { assignmentObject, user, late: true, average, assignmentGrade},
+              ]);
+
+              break;
+            case due > submit:
+              const dueYear = Number(due.slice(0, 4));
+              const submitDate = Number(submit.slice(0, 4));
+              if (dueYear - submitDate > 1) {
+                break;
+              } else {
+                // totalTemp += totalPossible;
+                // possibleTemp += score;
+                // average = possibleTemp / totalTemp;
+                tot += score; 
+                poss += totalPossible; 
+                averageItems.push({tot, poss, learnerID})
+                // console.log(average);
+                submission.push([
+                  { assignmentObject, user, late: false, average, assignmentGrade },
+                ]);
+
+                break;
+              }
+          }
+          // console.log(possibleTemp, totalTemp);
+          break;
         }
-      }   
-     }
-  }
+      }
+    }
   }
 
-  getAssignments()
+  getAssignments();
 
+  function getStudents(arr) {
+          return arr.filter((value, index) => arr.indexOf(value) == index);
+        }
+
+  // console.log(submission)
   function getAverage() {
 
-    let grades = []; 
+  
+ 
+   let gradesAverage = [];
 
-    for (let i = 0; i < submission.length; i++) {
+   function getStudents(arr) {
+     return arr.filter((value, index) => arr.indexOf(value) == index);
+ }
 
-      const item = submission[i];
-      const id = item[0].assignmentObject.id; 
-      const pointsPossible = (item[0].assignmentObject.points_possible);
-      const pointsEarned = (item[0].user.submission.score); 
+ for (let i = 0; i < submission.length; i++) {
 
-      let avgAssignment = pointsEarned / pointsPossible;
+         let item = submission[i];
+         const submissionAllowed = item[0];
+        const userId = item[0].user.learner_id;
+         const itemID = item[0].user.assignment_id;
+         const user = item[0].user;
+  
 
-      grades.push(avgAssignment.toFixed(2)); 
+        current.push(userId);
+        // if (!item.average) {
+        //   item.average =
+        // }
 
-      // console.log(`${id}: ${avgAssignment}`); 
+        
+        
+     
 
+  
+
+      }
+     
+     
+      // console.log(learners)
     }
+    getAverage();
 
-    
 
-  }
+    let learners = getStudents(current);
 
-  getAverage()
+    let position = learners.length; 
 
-  // console.log(submission); 
 
+    learners.forEach((learner) => {
+
+      let temp = learner; 
+      let tempTot = 0; 
+      let tempPoss = 0; 
+
+      for (let i = 0; i < averageItems.length; i++) {
+        if (averageItems[i].learnerID === temp) {
+          tempTot += averageItems[i].tot; 
+          tempPoss += averageItems[i].poss;
+          i + position;
+        } 
+      }
+
+      let average = (tempTot / tempPoss); 
+      console.log(average)
+    })
+
+    submission.forEach((sub) => {
+      console.log(sub)
+    })
+  result = [];
+ 
 }
 
-
-
-getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions); 
-
-// console.log(result); 
+getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
